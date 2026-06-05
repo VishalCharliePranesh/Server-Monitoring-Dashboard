@@ -1,23 +1,15 @@
 pipeline {
-
     agent any
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                url: 'https://github.com/YOUR_USERNAME/server-health-monitor.git'
-            }
-        }
-
-        stage('Build Image') {
+        stage('Build Docker Image') {
             steps {
                 sh 'docker build -t server-monitor -f docker/Dockerfile .'
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Remove Old Container') {
             steps {
                 sh '''
                 docker stop server-monitor || true
@@ -26,7 +18,7 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy Container') {
             steps {
                 sh '''
                 docker run -d \
