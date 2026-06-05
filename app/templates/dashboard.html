@@ -1,29 +1,191 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Server Monitoring Dashboards</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Health Monitor</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+        body{
+            background:#0f172a;
+            color:white;
+            min-height:100vh;
+            padding:40px;
+        }
+
+        .header{
+            text-align:center;
+            margin-bottom:40px;
+        }
+
+        .header h1{
+            font-size:40px;
+            font-weight:700;
+            color:#38bdf8;
+        }
+
+        .header p{
+            color:#94a3b8;
+            margin-top:10px;
+        }
+
+        .dashboard{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+            gap:25px;
+        }
+
+        .card{
+            background:#1e293b;
+            padding:25px;
+            border-radius:20px;
+            box-shadow:0 8px 25px rgba(0,0,0,0.3);
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+        }
+
+        .card h2{
+            margin-bottom:15px;
+            font-size:22px;
+        }
+
+        .value{
+            font-size:45px;
+            font-weight:bold;
+        }
+
+        .cpu{
+            color:#22c55e;
+        }
+
+        .memory{
+            color:#f59e0b;
+        }
+
+        .disk{
+            color:#ef4444;
+        }
+
+        .progress{
+            margin-top:15px;
+            width:100%;
+            height:12px;
+            background:#334155;
+            border-radius:20px;
+            overflow:hidden;
+        }
+
+        .progress-bar{
+            height:100%;
+            transition:0.5s;
+        }
+
+        .cpu-bar{
+            background:#22c55e;
+        }
+
+        .memory-bar{
+            background:#f59e0b;
+        }
+
+        .disk-bar{
+            background:#ef4444;
+        }
+
+        .footer{
+            text-align:center;
+            margin-top:40px;
+            color:#94a3b8;
+        }
+
+        .status{
+            margin-top:10px;
+            font-size:14px;
+            color:#10b981;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Server Health Monitoring Dashboard</h1>
+    <div class="header">
+        <h1>🚀 Server Health Monitoring Dashboard</h1>
+        <p>Real-Time AWS EC2 Resource Monitoring</p>
+    </div>
 
-<div class="card">
-    <h2>CPU Usage</h2>
-    <p id="cpu">Loading...</p>
-</div>
+    <div class="dashboard">
 
-<div class="card">
-    <h2>Memory Usage</h2>
-    <p id="memory">Loading...</p>
-</div>
+        <div class="card">
+            <h2>🖥 CPU Usage</h2>
+            <div class="value cpu" id="cpu">0%</div>
 
-<div class="card">
-    <h2>Disk Usage</h2>
-    <p id="disk">Loading...</p>
-</div>
+            <div class="progress">
+                <div id="cpu-bar" class="progress-bar cpu-bar"></div>
+            </div>
 
-<script src="/static/js/script.js"></script>
+            <div class="status">Healthy</div>
+        </div>
+
+        <div class="card">
+            <h2>💾 Memory Usage</h2>
+            <div class="value memory" id="memory">0%</div>
+
+            <div class="progress">
+                <div id="memory-bar" class="progress-bar memory-bar"></div>
+            </div>
+
+            <div class="status">Monitoring</div>
+        </div>
+
+        <div class="card">
+            <h2>📂 Disk Usage</h2>
+            <div class="value disk" id="disk">0%</div>
+
+            <div class="progress">
+                <div id="disk-bar" class="progress-bar disk-bar"></div>
+            </div>
+
+            <div class="status">Monitoring</div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        AWS EC2 • Docker • Jenkins • Flask • CloudWatch • SNS
+    </div>
+
+<script>
+
+async function fetchStats() {
+
+    const response = await fetch('/stats');
+    const data = await response.json();
+
+    document.getElementById('cpu').innerText = data.cpu + "%";
+    document.getElementById('memory').innerText = data.memory + "%";
+    document.getElementById('disk').innerText = data.disk + "%";
+
+    document.getElementById('cpu-bar').style.width = data.cpu + "%";
+    document.getElementById('memory-bar').style.width = data.memory + "%";
+    document.getElementById('disk-bar').style.width = data.disk + "%";
+}
+
+fetchStats();
+setInterval(fetchStats, 2000);
+
+</script>
 
 </body>
 </html>
